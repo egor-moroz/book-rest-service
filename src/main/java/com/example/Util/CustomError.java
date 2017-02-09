@@ -1,4 +1,4 @@
-package com.example.Util;
+package com.example.util;
 
 /**
  * Created by EgorPC on 09.02.2017.

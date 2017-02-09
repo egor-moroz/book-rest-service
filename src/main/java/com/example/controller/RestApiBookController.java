@@ -1,7 +1,7 @@
 package com.example.controller;
 
 
-import com.example.Util.CustomError;
+import com.example.util.CustomError;
 import com.example.model.Book;
 import com.example.service.BookService;
 import org.slf4j.Logger;
