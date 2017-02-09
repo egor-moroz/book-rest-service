@@ -36,12 +36,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book get(Integer integer) {
-        return bookRepository.findOne(integer);
+    public void deleteAll() {
+        bookRepository.deleteAll();
+    }
+
+    @Override
+    public Book get(Long id) {
+        return bookRepository.findOne(id);
     }
 
     @Override
     public List<Book> getAll() {
         return bookRepository.findAll();
     }
+
 }

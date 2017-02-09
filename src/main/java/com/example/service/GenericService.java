@@ -13,6 +13,8 @@ public interface GenericService <T, ID> {
 
     void delete(T obj);
 
+    void deleteAll();
+
     T get(ID id);
 
     List<T> getAll();

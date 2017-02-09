@@ -1,7 +1,7 @@
 package com.example.controller;
 
 
-
+import com.example.Util.CustomError;
 import com.example.model.Book;
 import com.example.service.BookService;
 import org.slf4j.Logger;
@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -31,21 +28,66 @@ public class RestApiBookController {
     BookService bookService;
 
     @RequestMapping(value = "/book", method = RequestMethod.GET)
-    public ResponseEntity<List<Book>> listAllBooks(){
+    public ResponseEntity<List<Book>> listAllBooks() {
         List<Book> books = bookService.getAll();
-        if(books.isEmpty()){
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        if (books.isEmpty()) {
+            return new ResponseEntity<List<Book>>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/book", method = RequestMethod.POST)
-    public ResponseEntity<?> createBook(@RequestBody Book book, UriComponentsBuilder ucBuilder){
-        logger.info("Creating Book : {}",book );
+    public ResponseEntity<?> createBook(@RequestBody Book book, UriComponentsBuilder ucBuilder) {
+        logger.info("Creating Book : {}", book);
         bookService.add(book);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ucBuilder.path("/rest/book/{id}").buildAndExpand(book.getId()).toUri());
-        return new ResponseEntity<String>(httpHeaders,HttpStatus.CREATED);
+        return new ResponseEntity<String>(httpHeaders, HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getBook(@PathVariable("id") long id) {
+        logger.info("Get book with id {}", id);
+        Book book = bookService.get(id);
+        if (book == null) {
+            logger.error("Book with id {} not found.", id);
+            return new ResponseEntity<CustomError>(new CustomError("Can not be found. Book with id " + id + " not found"), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<Book>(book, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/book/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateBook(@PathVariable("id") long id, @RequestBody Book book) {
+        logger.info("Update book with id {}", id);
+        Book currentBook = bookService.get(id);
+        if (currentBook == null) {
+            logger.error("Book with id {} not found.", id);
+            return new ResponseEntity<CustomError>(new CustomError("Can not be updated. Book with id " + id + " not found"), HttpStatus.NOT_FOUND);
+        }
+        currentBook.setTitle(book.getTitle());
+        currentBook.setDescription(book.getDescription());
+        currentBook.setNbOfPage(book.getNbOfPage());
+        currentBook.setPrice(book.getPrice());
+        bookService.edit(currentBook);
+        return new ResponseEntity<Book>(book, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/book/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteBook(@PathVariable("id") long id) {
+        logger.info("Deleting book with id : {}", id);
+        Book book = bookService.get(id);
+        if (book == null) {
+            logger.error("Can not be removed. Book with id {} not found", id);
+            return new ResponseEntity<CustomError>(new CustomError("Can not be removed. Book with id " + id + " not found."), HttpStatus.NOT_FOUND);
+        }
+        bookService.delete(book);
+        return new ResponseEntity<Book>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/book", method = RequestMethod.DELETE)
+    public ResponseEntity<Book> deleteAllBooks() {
+        logger.info("Deleting all books");
+        bookService.deleteAll();
+        return new ResponseEntity<Book>(HttpStatus.NO_CONTENT);
+    }
 }
