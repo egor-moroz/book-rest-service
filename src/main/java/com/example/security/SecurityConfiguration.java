@@ -14,12 +14,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	private static String REALM="MY_TEST_REALM";
+	private static String REALM="REALM";
 	
 	@Autowired
 	public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("bill").password("abc123").roles("ADMIN");
-		auth.inMemoryAuthentication().withUser("tom").password("abc123").roles("USER");
+		auth.inMemoryAuthentication().withUser("Alex").password("12345").roles("ADMIN");
+		auth.inMemoryAuthentication().withUser("Igor").password("12345").roles("USER");
 	}
 	
 	@Override
