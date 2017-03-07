@@ -45,6 +45,7 @@ public class RestApiBookController {
         return new ResponseEntity<String>(httpHeaders, HttpStatus.CREATED);
     }
 
+    /*@CrossOrigin(origins = "http://localhost:4200")*/
     @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getBook(@PathVariable("id") long id) {
         logger.info("Get book with id {}", id);

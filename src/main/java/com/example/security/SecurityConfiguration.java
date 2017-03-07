@@ -27,7 +27,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
  
 	  http.csrf().disable()
 	  	.authorizeRequests()
-	  	.antMatchers("/rest/book/**").hasRole("ADMIN")
+	  	.antMatchers("/rest/book/**").permitAll()
 		.and().httpBasic().realmName(REALM).authenticationEntryPoint(getBasicAuthEntryPoint());
  	}
 	
